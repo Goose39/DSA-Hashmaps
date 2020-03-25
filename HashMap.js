@@ -1,5 +1,3 @@
-let LinkedList = require('./LinkedList')
-
 class HashMap {
   constructor(initialCapacity=20) {
       this.length = 0;
@@ -11,7 +9,8 @@ class HashMap {
   get(key) {
       const index = this._findSlot(key);
       if (this._hashTable[index] === undefined) {
-          throw new Error('Key error');
+          // throw new Error('Key error');
+          return undefined;
       }
       return this._hashTable[index].value;
   }
@@ -26,29 +25,36 @@ class HashMap {
 
       if(!this._hashTable[index]){
           this.length++;
-          this._hashTable[index] = new LinkedList()
-          this._hashTable[index].insertFirst(value)
-      } else {
-        this._hashTable[index].insertLast(value)
       }
+      this._hashTable[index] = {
+          key,
+          value,
+          DELETED: false
+      }; 
   }
 
   delete(key) {
-    const index = this._findSlot(key);
-    const slot = this._hashTable[index];
-    if (slot === undefined) {
-        throw new Error('Key error');
-    }
-    slot.DELETED = true;
-    this.length--;
-    this._deleted++;
+      const index = this._findSlot(key);
+      const slot = this._hashTable[index];
+      if (slot === undefined) {
+          throw new Error('Key error');
+      }
+      slot.DELETED = true;
+      this.length--;
+      this._deleted++;
   }
 
   _findSlot(key) {
-    const hash = HashMap._hashString(key);
-    const index = hash % this._capacity;
+      const hash = HashMap._hashString(key);
+      const start = hash % this._capacity;
 
-   return index
+      for (let i=start; i<start + this._capacity; i++) {
+          const index = i % this._capacity;
+          const slot = this._hashTable[index];
+          if (slot === undefined || (slot.key === key && !slot.DELETED)) {
+              return index;
+          }
+      }
   }
 
   _resize(size) {
@@ -82,28 +88,4 @@ class HashMap {
   }
 }
 
-main = () => {
-  let lotr = new HashMap;
-
-  lotr.MAX_LOAD_RATIO = 0.5;
-  lotr.SIZE_RATIO = 3;
-
-  lotr.set("Hobbit", "Bilbo");
-  lotr.set("Hobbit", "Frodo");
-  lotr.set("Wizard", "Gandolf");
-  lotr.set("Human", "Aragorn");
-  lotr.set("Elf", "Legolas");
-  lotr.set("Maiar", "The Necromancer");
-  lotr.set("Maiar", "Sauron");
-  lotr.set("RingBearer", "Gollum");
-  lotr.set("LadyOfLight", "Galadriel");
-  lotr.set("HalfElven", "Arwen");
-  lotr.set("Ent", "Treebeard");
-
-  // lotr._hashTable.map(item => console.log(item))
-  // return lotr.get("Hobbit");
-  return lotr;
-
-}
-
-console.log(main());
+module.exports = HashMap;
