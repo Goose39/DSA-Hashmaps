@@ -1,7 +1,7 @@
 let LinkedList = require('./LinkedList')
 
 class HashMap {
-  constructor(initialCapacity=20) {
+  constructor(initialCapacity=8) {
       this.length = 0;
       this._hashTable = [];
       this._capacity = initialCapacity;
@@ -17,6 +17,7 @@ class HashMap {
   }
 
   set(key, value){
+    console.log(key);
       const loadRatio = (this.length + this._deleted + 1) / this._capacity;
       if (loadRatio > HashMap.MAX_LOAD_RATIO) {
           this._resize(this._capacity * HashMap.SIZE_RATIO);
@@ -57,13 +58,7 @@ class HashMap {
       // Reset the length - it will get rebuilt as you add the items back
       this.length = 0;
       this._deleted = 0;
-      this._hashTable = [];
-
-      for (const slot of oldSlots) {
-          if (slot !== undefined && !slot.DELETED) {
-              this.set(slot.key, slot.value);
-          }
-      }
+      this._hashTable = oldSlots;
   }
 
   static _hashString(string) {
@@ -83,10 +78,10 @@ class HashMap {
 }
 
 main = () => {
-  let lotr = new HashMap;
+  let lotr = new HashMap();
 
-  lotr.MAX_LOAD_RATIO = 0.5;
-  lotr.SIZE_RATIO = 3;
+  HashMap.MAX_LOAD_RATIO = 0.5;
+  HashMap.SIZE_RATIO = 3;
 
   lotr.set("Hobbit", "Bilbo");
   lotr.set("Hobbit", "Frodo");

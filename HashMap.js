@@ -1,5 +1,5 @@
 class HashMap {
-  constructor(initialCapacity=20) {
+  constructor(initialCapacity=8) {
       this.length = 0;
       this._hashTable = [];
       this._capacity = initialCapacity;
